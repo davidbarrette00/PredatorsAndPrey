@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class Script_Actor : MonoBehaviour
@@ -12,50 +13,75 @@ public class Script_Actor : MonoBehaviour
     float time_since_last_procreation = 0.0f;
 
     LinkedList<Vector3> path = new LinkedList<Vector3>();
+    // Vector3 desired_position = Vector3.zero;
 
     public int health = 5;
     public int sight_radius = 5;
+
+    String food;
 
     // Start is called before the first frame update
     void Start()
     {
         map = GameObject.Find("Map").GetComponent<Script_Map>();
 
-        time_between_moves += UnityEngine.Random.Range(-0.5f, 0.5f);
-        time_between_procreation += UnityEngine.Random.Range(-0.5f, 0.5f);
+        if(gameObject.name.Contains(constants.prefab_coyote)){
+            food = constants.prefab_rabbit;
+        } else if(gameObject.name.Contains(constants.prefab_rabbit)){
+            food = constants.prefab_berries;
+        }
+
+        time_between_moves += UnityEngine.Random.Range(-0.1f, 0.1f);
+        time_between_procreation += UnityEngine.Random.Range(-0.1f, 0.1f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(health <= 0){
-            Destroy(gameObject);
-        }
+        // if(health <= 0){
+        //     Destroy(gameObject);
+        // }
 
-
+        
         if(time_since_last_move > time_between_moves){
 
-            if(path.Count == 0){
-                print("here");
-                // foreach(GameObject obj in map.tile_grid[(int) transform.position.x][(int) transform.position.y].objects_on_tile){
-                //     if(obj.name.Contains("prefab_berry")){ //found a berry
-                //         map.handleEatingBerry(gameObject, obj);
-                //     }
-                // }
-                search();
-            } else {
-                transform.position += path.First.Value;
-                path.RemoveFirst();
+            if(path == null || path.Count == 0){
+                foreach(GameObject obj in map.tile_grid[(int) transform.position.x][(int) transform.position.y].objects_on_tile){
+                    if(obj.name.Contains(food)){ //on a tile with actor's food
+                        map.tile_grid[(int) transform.position.x][(int) transform.position.y].objects_on_tile.Remove(obj);
+                        Destroy(obj);
 
-                time_since_last_move = 0.0f;
-                health -= 1;
+                        if(food.Equals(constants.prefab_berries)){
+                            map.generateNewGroupOfBerries();
+                        }
+
+                        break;
+                    }
+                }
+                search();
             }
+            
+            Tile old_tile = map.tile_grid[(int) transform.position.x][(int) transform.position.y];
+            transform.position += path.First.Value;
+            Tile new_tile = map.tile_grid[(int) transform.position.x][(int) transform.position.y];
+            path.RemoveFirst();
+
+
+
+
+            old_tile.objects_on_tile.Remove(gameObject);
+            new_tile.objects_on_tile.Add(gameObject);
+            time_since_last_move = 0.0f;
+            // health -= 1;
+        } else {
+            //
+            //TODO ANIMATE THE MOVE
         }
 
         if(time_since_last_procreation > time_between_procreation){
             map.handleProcreation(gameObject);
 
-            health -= 2;
+            // health -= 5;
             time_since_last_procreation = 0.0f;
         }
 
@@ -68,45 +94,33 @@ public class Script_Actor : MonoBehaviour
         int x = (int) transform.position.x;
         int y = (int) transform.position.y;
 
-        //search in a square around the actor for a berry
-        bool found_berry = false;
+        //search in a square around the actor for food
         for(int i = x - sight_radius; i < x + sight_radius; i++){
             for(int j = y - sight_radius; j < y + sight_radius; j++){
                 if(i < 0 || j < 0 || i >= map.map_width || j >= map.map_height){ //out of bounds
                     continue;
                 } else {
-                    foreach(GameObject obj in map.tile_grid[i][j].objects_on_tile){ //water
-                        if(obj.name.Contains("prefab_berries")){
-                            print("Found berry");
+                    foreach(GameObject obj in map.tile_grid[i][j].objects_on_tile){
+                        if(obj.name.Contains(food)){
+                            if(gameObject.name.Contains(constants.prefab_rabbit)){
+                                print($"food {food} {x} {y} {i} {j}");
+                            }
                             FindPath(x, y, i, j);
-                            found_berry = true;
-                            //break foreach
-                            break;
+                            return;
                         }
                     }
                 }
-                //Break "Y" loop
-                if(found_berry){
-                    break;
-                }
             }
-            //Break "X" loop
-            if(found_berry){
-                break;
-            } 
         }
         
-        //if no berry, just roam randomly
-        if(!found_berry){
-            print("Roaming");
-            List<Vector3> possible_roaming_moves = get_roaming_moves(x, y);
+        //if no food, just roam randomly
+        List<Vector3> possible_roaming_moves = get_roaming_moves(x, y);
 
-            int chosen_move_index = UnityEngine.Random.Range(0, possible_roaming_moves.Count);
-            if(chosen_move_index == possible_roaming_moves.Count-1){
-                //dont'move
-            } else {
-                path.AddLast(possible_roaming_moves[chosen_move_index]);
-            }
+        int chosen_move_index = UnityEngine.Random.Range(0, possible_roaming_moves.Count);
+        if(chosen_move_index == possible_roaming_moves.Count-1){
+            path.AddLast(new Vector3(0, 0, 0));
+        } else {
+            path.AddLast(possible_roaming_moves[chosen_move_index]);
         }
         
     }
@@ -223,17 +237,17 @@ public class Script_Actor : MonoBehaviour
             {
                 y -= 1;  // Move down
                 path.AddLast(new Vector3(0, -1, 0.0f));
+            } else {
+                //idk
+                path.AddLast(new Vector3(0, 0, 0.0f));
+            }
+
+            if(gameObject.name.Contains(constants.prefab_coyote)){
+                //need to only add 1 because we need to search for where the rabbit moves next
+                print("break coyote path");
+                break;
             }
         }
-
-        // path.Reverse();
-        String temp= "";
-        foreach (Vector3 move in path)
-        {
-            temp += move.ToString() + " ";
-        }
-        print(temp);
-        
     }
     
 }

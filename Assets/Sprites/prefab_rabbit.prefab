@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6110368932844354155}
   - component: {fileID: 4275668359033109484}
   m_Layer: 0
-  m_Name: prefab_prey
+  m_Name: prefab_rabbit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2922b4704d022584a9c7e3f019197a87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  time_between_procreation: 3
+  time_between_procreation: 100
   time_between_moves: 0.5
   health: 100
-  sight_radius: 5
+  sight_radius: 100

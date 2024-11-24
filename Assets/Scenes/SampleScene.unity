@@ -262,15 +262,15 @@ MonoBehaviour:
   prefab_water: {fileID: 3308417420326237700, guid: e19ec61c4767ace49b4e55fc5dfdcb37, type: 3}
   prefab_grass: {fileID: 1856649480617348134, guid: 80f609345d1833a4e9928e89983aebb1, type: 3}
   prefab_berries: {fileID: 6377475438569373306, guid: 5361f79ee3cd4fa46ae0cebf47709f57, type: 3}
-  prefab_predator: {fileID: 8125987754538682609, guid: 535f10f4641e7594a9e874d08b6ac531, type: 3}
-  prefab_prey: {fileID: 6337752380503474648, guid: 0742408cbd0b6c447a8047021c4faa56, type: 3}
-  map_width: 200
-  map_height: 200
-  magnification: 4
+  prefab_coyote: {fileID: 8125987754538682609, guid: 535f10f4641e7594a9e874d08b6ac531, type: 3}
+  prefab_rabbit: {fileID: 6337752380503474648, guid: 0742408cbd0b6c447a8047021c4faa56, type: 3}
+  map_width: 25
+  map_height: 25
+  magnification: 25
   max_actors: 100
   num_berries: 5
-  starting_predators: 3
-  starting_prey: 5
+  starting_predators: 5
+  starting_prey: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

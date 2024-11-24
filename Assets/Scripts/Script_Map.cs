@@ -22,8 +22,8 @@ public class Script_Map : MonoBehaviour
     // public GameObject prefab_ice;
     // public GameObject prefab_dirt;
     
-    public GameObject prefab_predator;
-    public GameObject prefab_prey;
+    public GameObject prefab_coyote;
+    public GameObject prefab_rabbit;
     public int map_width = 16;
     public int map_height = 9;
 
@@ -47,10 +47,10 @@ public class Script_Map : MonoBehaviour
         CreateTileGroups();//organize the heirarchy
         GenerateMap();
         for(int i = 0; i < starting_predators; i++){
-            SpawnActors(prefab_predator);
+            SpawnActors(prefab_coyote);
         }
         for(int i = 0; i < starting_prey; i++){
-            SpawnActors(prefab_prey);
+            SpawnActors(prefab_rabbit);
         }
 
 
@@ -60,7 +60,7 @@ public class Script_Map : MonoBehaviour
     }
 
     void Update(){
-        print("Actor count: " + actors.Count);
+        print("DEBUG: Actor count: " + actors.Count);
     }
 
     void CreateTileSet(){
@@ -100,11 +100,11 @@ public class Script_Map : MonoBehaviour
         }
 
         for(int x = 0; x < num_berries; x++){
-            generateBerry();
+            generateNewGroupOfBerries();
         }
     }
 
-    public void generateBerry(){
+    public void generateNewGroupOfBerries(){
         Tile tile = getRandomSpawnableTile(); 
 
         GameObject berry = Instantiate(prefab_berries, new Vector3(tile.x, tile.y, 0), Quaternion.identity);
@@ -137,6 +137,7 @@ public class Script_Map : MonoBehaviour
     void SpawnActors(GameObject prefab){
         Tile tile = getRandomSpawnableTile();
         GameObject actor = Instantiate(prefab, new Vector3(tile.x, tile.y, 0), Quaternion.identity);
+        tile.objects_on_tile.Add(actor);
         actors.Add(actor);
     }
 
@@ -148,10 +149,10 @@ public class Script_Map : MonoBehaviour
         
         GameObject new_actor = null;
 
-        if(actor.name.Contains("prefab_predator")){
-            new_actor = Instantiate(prefab_predator, new Vector3(actor.transform.position.x, actor.transform.position.y, 0), Quaternion.identity);
-        } else if(actor.name.Contains("prefab_prey")){
-            new_actor = Instantiate(prefab_prey, new Vector3(actor.transform.position.x, actor.transform.position.y, 0), Quaternion.identity);
+        if(actor.name.Contains(constants.prefab_coyote)){
+            new_actor = Instantiate(prefab_coyote, new Vector3(actor.transform.position.x, actor.transform.position.y, 0), Quaternion.identity);
+        } else if(actor.name.Contains(constants.prefab_rabbit)){
+            new_actor = Instantiate(prefab_rabbit, new Vector3(actor.transform.position.x, actor.transform.position.y, 0), Quaternion.identity);
         }
 
         actors.Add(new_actor);
@@ -169,7 +170,7 @@ public class Script_Map : MonoBehaviour
         return tile_grid[x][y];
     }
 
-    public void handleEatingBerry(GameObject actor, GameObject berry){
-        Destroy(berry);
+    void spawnNewBerries(){
+
     }
 }

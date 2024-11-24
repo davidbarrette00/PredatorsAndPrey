@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5030585107036788363}
   - component: {fileID: -1050326179361880648}
   m_Layer: 0
-  m_Name: prefab_predator
+  m_Name: prefab_coyote
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2922b4704d022584a9c7e3f019197a87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  time_between_procreation: 5
+  time_between_procreation: 100
   time_between_moves: 1
   health: 200
-  sight_radius: 5
+  sight_radius: 100
